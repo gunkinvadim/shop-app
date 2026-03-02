@@ -1,0 +1,60 @@
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(#000000, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    .popup {
+        width: 500px;
+        height: 500px;
+        background: white;
+        border: 1px solid black;
+        display: flex;
+        flex-direction: column;
+
+        .popup-header {
+            padding: 20px;
+            border-bottom: 1px solid black;
+
+            h2 {
+                margin: 0;
+            }
+        }
+
+        .popup-body {
+            padding: 20px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            .input-container {
+                // label {
+                //     display: block;
+                // }
+
+                display: flex;
+                justify-content: space-between;
+                align-items: flex-start;
+
+                input, textarea, select {
+                    width: 300px;
+                    max-width: 300px;
+                }
+            }
+        }
+
+        .popup-footer {
+            border-top: 1px solid black;
+            padding: 20px;
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            gap: 10px;
+        }
+    }
+}

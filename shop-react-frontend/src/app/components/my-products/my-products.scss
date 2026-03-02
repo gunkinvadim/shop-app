@@ -1,0 +1,23 @@
+.my-products-container {
+    .my-products-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+
+        h1 {
+            margin: 0;
+        }
+
+        .new-product-btn {
+            height: 32px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+        }
+    }
+
+    .my-products-list {
+        
+    }
+}

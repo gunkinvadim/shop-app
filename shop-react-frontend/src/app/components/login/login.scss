@@ -1,0 +1,19 @@
+.login-form {
+    h3 {
+        margin-bottom: 0;
+    }
+
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    .input-container {
+        // width: 500px;
+        label {
+            display: block;
+        }
+    }
+
+    .error-text {
+        color: red
+    }
+}

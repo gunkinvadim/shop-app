@@ -22,16 +22,26 @@ export class ProductsController {
     }
 
     @Get()
-    getProductList(@Query('sellerId') sellerId?: string) {
-        const idNum = sellerId ? Number(sellerId) : null;
-        return this.productsService.getProductList(idNum);
+    getProductList(
+        @Query('sellerId') sellerId?: string,
+        @Query('categoryId') categoryId?: string
+    ) {
+        const sellerIdNum = sellerId ? Number(sellerId) : null;
+        const categoryIdNum = categoryId ? Number(categoryId) : null;
+
+        return this.productsService.getProductList(sellerIdNum, categoryIdNum);
     }
 
     @UseGuards(AuthGuard("jwt"))
     @Get("my")
-    async getMyProducts(@CurrentUser() user: { userId: number }) {
-        return this.productsService.getProductList(user.userId);
+    async getMyProducts(
+        @CurrentUser() user: { userId: number },
+        @Query('categoryId') categoryId?: string
+    ) {
+        const categoryIdNum = categoryId ? Number(categoryId) : null;
+        return this.productsService.getProductList(user.userId, categoryIdNum);
     }
+
 
     @Get('categories')
     getCategories() {

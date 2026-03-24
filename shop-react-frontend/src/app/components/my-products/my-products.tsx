@@ -2,12 +2,13 @@ import { useEffect, useState } from "react";
 import "./my-products.scss";
 import { ProductForm } from "./product-form/product-form";
 import { fetchCategoriesList, fetchMyProductsList, fetchProductsList } from "../../api/products.api";
-import { ProductCategory, ProductData } from "../../models/products.model";
+import { ProductCategory, ProductData, ProductListFilters } from "../../models/products.model";
 import { environment } from "../../../environments/environment";
 
 export const MyProducts = () => {
 
     const [ productFormPopup, setProductFormPopup ] = useState<{ active: boolean, productId: number }>({ active: false, productId: null });
+    const [ filters, setFilters ] = useState<ProductListFilters>({});
     const [ categoriesList, setCategoriesList ] = useState<ProductCategory[]>([]);
     const [ productsList, setProductsList ] = useState<ProductData[]>([]);
     const [ isLoading, setIsLoading ] = useState(false);
@@ -21,7 +22,23 @@ export const MyProducts = () => {
             setIsLoading(true);
             const categories = await fetchCategoriesList();
             setCategoriesList(categories.data);
-            const products = await fetchMyProductsList();
+            const products = await fetchMyProductsList(filters);
+            setProductsList(products.data);
+        } catch(e) {
+            console.error(e);
+        } finally {
+            setIsLoading(false);
+        }
+    }
+
+    const handleFilterChanges = async (newFilters: ProductListFilters) => {
+        newFilters = { ...filters, ...newFilters };
+        setFilters(newFilters);
+
+        try {
+            setIsLoading(true);
+            debugger
+            const products = await fetchMyProductsList(newFilters);
             setProductsList(products.data);
         } catch(e) {
             console.error(e);
@@ -36,6 +53,15 @@ export const MyProducts = () => {
             <div className="my-products-header">
                 <h1>Products List</h1>
                 <button className="new-product-btn" onClick={() => setProductFormPopup({ active: true, productId: null })}>Add New Product</button>
+            </div>
+
+            <div className="filters-container">
+                <select onChange={(e) => handleFilterChanges({ categoryId: parseInt(e.currentTarget.value) })}>
+                    <option value={null}>All categories</option>
+                    {categoriesList.map(i => <option key={i.id} value={i.id}>
+                        {i.name}
+                    </option>)}
+                </select>
             </div>
 
             <div className="my-products-list">

@@ -1,6 +1,6 @@
 import { error } from "console";
 import { environment } from "../../environments/environment";
-import { ProductCategory, ProductData, ProductFormData } from "../models/products.model";
+import { ProductCategory, ProductData, ProductFormData, ProductListFilters } from "../models/products.model";
 import axios from "axios";
 
 // helper to read `token` cookie value
@@ -28,7 +28,7 @@ export const fetchProductsList = async () => {
     }
 }
 
-export const fetchMyProductsList = async () => {
+export const fetchMyProductsList = async (filters: ProductListFilters) => {
     try {
         return await axios.get<ProductData[]>(environment.baseUrl + "/products/my");
     } catch (error) {

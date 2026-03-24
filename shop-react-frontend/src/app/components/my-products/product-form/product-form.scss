@@ -66,6 +66,10 @@
                     color: #111;
                 }
 
+                select {
+                    cursor: pointer;
+                }
+
                 textarea {
                     min-height: 70px;
                     resize: vertical;

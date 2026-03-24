@@ -23,3 +23,8 @@ export interface ProductData {
     category: ProductCategory,
     imageUrl?: string,
 }
+
+export interface ProductListFilters {
+    categoryId?: number,
+    sellerId?: number
+}

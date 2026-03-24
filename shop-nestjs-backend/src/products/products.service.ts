@@ -24,8 +24,8 @@ export class ProductsService {
         return this.categoryRepository.find();
     }
 
-    async getProductList(sellerId: number | null) {
-        if (sellerId == null) {
+    async getProductList(sellerId: number | null, categoryId: number | null) {
+        if (sellerId == null && categoryId == null) {
             return this.productRepository.find({ relations: ['seller', 'category'] });
         }
 

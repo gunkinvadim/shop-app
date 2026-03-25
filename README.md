@@ -1,4 +1,4 @@
-# shop-app
+# marketplace-app
 
 Fullstack marketplace application (React + NestJS).
 

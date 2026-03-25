@@ -7,7 +7,7 @@ import { environment } from "../../../environments/environment";
 
 export const MyProducts = () => {
 
-    const [ productFormPopup, setProductFormPopup ] = useState<{ active: boolean, productId: number }>({ active: false, productId: null });
+    const [ productFormPopup, setProductFormPopup ] = useState<{ active: boolean, product: ProductData }>({ active: false, product: null });
     const [ filters, setFilters ] = useState<ProductListFilters>({});
     const [ categoriesList, setCategoriesList ] = useState<ProductCategory[]>([]);
     const [ productsList, setProductsList ] = useState<ProductData[]>([]);
@@ -47,12 +47,16 @@ export const MyProducts = () => {
         }
     }
 
+    const openEditPopup = (product: ProductData) => {
+        setProductFormPopup({ active: true, product })
+    }
+
 
     return <>
         <div className="my-products-container">
             <div className="my-products-header">
                 <h1>Products List</h1>
-                <button className="new-product-btn" onClick={() => setProductFormPopup({ active: true, productId: null })}>Add New Product</button>
+                <button className="new-product-btn" onClick={() => setProductFormPopup({ active: true, product: null })}>Add New Product</button>
             </div>
 
             <div className="filters-container">
@@ -71,15 +75,19 @@ export const MyProducts = () => {
                     <div className="product-category">{product.category?.name}</div>
                     <div className="product-description">{product.description}</div>
                     <div className="product-price">{product.price}$</div>
+                    <div className="buttons-container">
+                        <button className="edit" onClick={() => openEditPopup(product)}>Edit</button>
+                        <button className="delete">Delete</button>
+                    </div>
                 </div>)}
             </div>
         </div>
 
         {productFormPopup.active && <ProductForm
-            productId={productFormPopup.productId}
+            product={productFormPopup.product}
             categoriesList={categoriesList}
             fetchData={() => fetchData()}
-            closePopup={() => setProductFormPopup({ active: false, productId: null })}
+            closePopup={() => setProductFormPopup({ active: false, product: null })}
         ></ProductForm>}
     </>
 }

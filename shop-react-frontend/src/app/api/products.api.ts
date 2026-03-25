@@ -55,3 +55,22 @@ export const createNewProduct = async (req: ProductFormData | FormData) => {
         throw error;
     }
 }
+
+export const editProduct = async (productId: number, req: ProductFormData | FormData) => {
+    try {
+        if (req instanceof FormData) {
+            const token = getTokenFromCookie();
+            const headers: Record<string, string> = {};
+            if (token) headers['Authorization'] = `Bearer ${token}`;
+
+            // Let the browser set Content-Type with the correct boundary;
+            // attach Authorization header per-request to avoid relying on axios.defaults
+            return await axios.put<any>(environment.baseUrl + `/products/${productId}`, req, { headers });
+        }
+
+        return await axios.put<any>(environment.baseUrl + `/products/${productId}`, req);
+    } catch (error) {
+        console.error("Error creating product:", error);
+        throw error;
+    }
+}

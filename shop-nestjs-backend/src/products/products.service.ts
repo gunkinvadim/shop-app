@@ -58,6 +58,8 @@ export class ProductsService {
             const category = await this.categoryRepository.findOne({ where: { id: categoryId } });
             if (!category) throw new BadRequestException('Invalid categoryId');
             product.category = category;
+        } else {
+            throw new BadRequestException('Missing category!');
         }
 
         if (productData.sellerId) {
@@ -95,5 +97,54 @@ export class ProductsService {
                 roles: savedProduct.seller.roles,
             } : null,
         }
+    }
+
+    async editProduct(productId: number, productData: ProductFormData, file?: Express.Multer.File) {
+        if (!productData || !productData.name) {
+            throw new BadRequestException('Missing product name');
+        }
+
+        const product = await this.productRepository.findOne({ where: { id: productId } });
+        if (!product) throw new BadRequestException('Product not found');
+
+        product.name = productData.name;
+        product.description = productData.description;
+
+        if (productData.price) {
+            product.price = Number(productData.price);
+        } else {
+            throw new BadRequestException('Missing price!');
+        }
+
+        if (productData.categoryId) {
+            const categoryId = Number(productData.categoryId);
+            const category = await this.categoryRepository.findOne({ where: { id: categoryId } });
+            if (!category) throw new BadRequestException('Invalid categoryId');
+            product.category = category;
+        } else {
+            throw new BadRequestException('Missing category!');
+        }
+
+        // handle file if provided
+        if (file && file.buffer) {
+            // delete old image if it exists
+            if (product.imageUrl) {
+                const oldPath = join(process.cwd(), product.imageUrl);
+                await fs.rm(oldPath, { force: true });
+            }
+
+            const uploadsDir = join(process.cwd(), 'uploads', 'products');
+            await fs.mkdir(uploadsDir, { recursive: true });
+
+            const ext = (file.originalname && file.originalname.split('.').pop()) || 'bin';
+            const filename = `${randomUUID()}.${ext}`;
+            const filePath = join(uploadsDir, filename);
+            await fs.writeFile(filePath, file.buffer);
+
+            product.imageUrl = `/uploads/products/${filename}`;
+        }
+        // else: keep existing imageUrl unchanged
+
+        return this.productRepository.save(product);
     }
 }

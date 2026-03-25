@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, Query, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, Get, Param, Patch, Post, Put, Query, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
 import { ProductsService } from './products.service';
 import { AuthGuard } from '@nestjs/passport';
 import { FileInterceptor } from '@nestjs/platform-express';
@@ -14,11 +14,23 @@ export class ProductsController {
     @Post()
     @UseInterceptors(FileInterceptor("image", { storage: multer.memoryStorage() }))
     async createNewProduct(
-        @UploadedFile() file: Express.Multer.File,
-        @Body() productFormData: productModel.ProductFormData
+        @Body() productFormData: productModel.ProductFormData,
+        @UploadedFile() file: Express.Multer.File
     ) {
         const created = await this.productsService.createNewProduct(productFormData, file);
         return created;
+    }
+
+    @UseGuards(AuthGuard("jwt"))
+    @Put(":id")
+    @UseInterceptors(FileInterceptor("image", { storage: multer.memoryStorage() }))
+    async editProduct(
+        @Param("id") id: string,
+        @Body() productFormData: productModel.ProductFormData,
+        @UploadedFile() file: Express.Multer.File
+    ) {
+        const edited = await this.productsService.editProduct(Number(id), productFormData, file);
+        return edited;
     }
 
     @Get()

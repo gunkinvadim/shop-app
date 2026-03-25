@@ -1,11 +1,11 @@
 import { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import "./product-form.scss";
 import useUserStore from "../../../stores/userStore";
-import { ProductCategory, ProductFormData } from "../../../models/products.model";
-import { createNewProduct } from "../../../api/products.api";
+import { ProductCategory, ProductData, ProductFormData } from "../../../models/products.model";
+import { createNewProduct, editProduct } from "../../../api/products.api";
 
-export const ProductForm = ({ productId, categoriesList, closePopup, fetchData }:
-    { productId: number, categoriesList: ProductCategory[], closePopup: () => void, fetchData: () => Promise<void> }) => {
+export const ProductForm = ({ product, categoriesList, closePopup, fetchData }:
+    { product: ProductData, categoriesList: ProductCategory[], closePopup: () => void, fetchData: () => Promise<void> }) => {
 
     const [ productFormData, setProductFormData ] = useState<ProductFormData>({
         name: "",
@@ -20,9 +20,17 @@ export const ProductForm = ({ productId, categoriesList, closePopup, fetchData }
     const userData = useUserStore((state => state.userData));
 
     useEffect(() => {
-        console.log(productId);
+        console.log(product);
 
-        if (!productId) {
+        if (product) {
+            setProductFormData({
+                name: product.name,
+                description: product.description,
+                price: product.price,
+                sellerId: product.seller.id,
+                categoryId: product.category.id
+            })
+        } else {
             setProductFormData({
                 ...productFormData,
                 sellerId: userData.id
@@ -38,6 +46,44 @@ export const ProductForm = ({ productId, categoriesList, closePopup, fetchData }
     const submitForm = async (e: FormEvent) => {
         e.preventDefault();
 
+        if (product) {
+            await handleProductEdit();
+        } else {
+            await handleProductCreate();
+        }
+    };
+
+
+    const handleProductEdit = async () => {
+        const formData = new FormData();
+
+        if (selectedImage) {
+            // append file
+            formData.append("image", selectedImage);
+
+            Object.entries(productFormData).forEach(([key, value]) => {
+                if (value === null || value === undefined) return;
+                if (typeof value === 'object') {
+                    formData.append(key, JSON.stringify(value));
+                } else {
+                    formData.append(key, String(value));
+                }
+            });
+        }
+
+        try {
+            const res = await editProduct(product.id, selectedImage ? formData : productFormData);
+            console.log(res);
+            await fetchData();
+            closePopup();
+        } catch(err) {
+            console.error(err);
+            alert("Error editing product");
+        }
+        return;
+    }
+
+    const handleProductCreate = async () => {
         if (!selectedImage) {
             alert("Please select a file first!");
             return;
@@ -65,7 +111,7 @@ export const ProductForm = ({ productId, categoriesList, closePopup, fetchData }
             console.error(err);
             alert("Error creating product");
         }
-    };
+    }
 
     return <div className="overlay">
         <form className="popup"
@@ -82,7 +128,9 @@ export const ProductForm = ({ productId, categoriesList, closePopup, fetchData }
                 </div>
                 <div className="input-container">
                     <label htmlFor="categoryId">Category</label>
-                    <select onChange={(e) => setProductFormData({ ...productFormData, categoryId: parseInt(e.currentTarget.value) })}>
+                    <select onChange={(e) => setProductFormData({ ...productFormData, categoryId: parseInt(e.currentTarget.value) })}
+                        value={productFormData.categoryId}
+                    >
                         <option value={null}>Select category</option>
                         {categoriesList.map(i => <option key={i.id} value={i.id}>
                             {i.name}

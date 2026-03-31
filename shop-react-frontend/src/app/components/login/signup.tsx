@@ -8,6 +8,7 @@ import { useCookies } from "react-cookie";
 import { signUp } from "../../api/auth.api";
 import { SignUpFormValue } from "../../models/auth.models";
 import useUserStore from "../../stores/userStore";
+import { useAppStore } from "../../stores/appStore";
 
 export const SignUp = () => {
 
@@ -16,7 +17,9 @@ export const SignUp = () => {
 
     const [ formValue, setFormValue ] = useState<SignUpFormValue>({ username: "", email: "", password: "", repeatPassword: "", createSellerAccount: false });
     const [ error, setError ] = useState<string>();
-    const [ isLoading, setIsLoading ] = useState<boolean>();
+
+    const isLoading = useAppStore((state => state.isLoading));
+    const setIsLoading = useAppStore((state => state.setIsLoading));
 
     const navigate = useNavigate();
     const [cookies, setCookie, removeCookie] = useCookies();
@@ -26,6 +29,7 @@ export const SignUp = () => {
         console.log(formValue);
 
         try {
+            setIsLoading(true);
             const res = await signUp(formValue);
 
             console.log(res);
@@ -46,6 +50,8 @@ export const SignUp = () => {
                 setError(err.response.data.message);
             }
             console.error(err);
+        } finally {
+            setIsLoading(false);
         }
     }
 

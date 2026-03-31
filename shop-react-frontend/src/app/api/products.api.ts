@@ -78,3 +78,12 @@ export const editProduct = async (productId: number, req: ProductFormData | Form
         throw error;
     }
 }
+
+export const deleteProduct = async (productId: number) => {
+    try {
+        return await axios.delete(environment.baseUrl + `/products/${productId}`);
+    } catch (error) {
+        console.error("Error creating product:", error);
+        throw error;
+    }
+}

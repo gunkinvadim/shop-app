@@ -7,6 +7,7 @@ import { useNavigate } from "react-router-dom";
 import { useCookies } from "react-cookie";
 import { login } from "../../api/auth.api";
 import { LoginFormValue } from "../../models/auth.models";
+import { useAppStore } from "../../stores/appStore";
 
 export const Login = () => {
 
@@ -15,7 +16,9 @@ export const Login = () => {
 
     const [ formValue, setFormValue ] = useState<LoginFormValue>({ login: "", password: "" });
     const [ error, setError ] = useState<string>();
-    const [ isLoading, setIsLoading ] = useState<boolean>();
+
+    const isLoading = useAppStore((state => state.isLoading));
+    const setIsLoading = useAppStore((state => state.setIsLoading));
 
     const navigate = useNavigate();
     const [cookies, setCookie, removeCookie] = useCookies();
@@ -26,6 +29,7 @@ export const Login = () => {
         console.log(formValue);
 
         try {
+            setIsLoading(true);
             const res = await login(formValue);
 
             console.log(res);
@@ -46,6 +50,8 @@ export const Login = () => {
                 setError(err.response.data.message);
             }
             console.error(err);
+        } finally {
+            setIsLoading(false);
         }
     }
 

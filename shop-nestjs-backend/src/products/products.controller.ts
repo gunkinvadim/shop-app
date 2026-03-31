@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Patch, Post, Put, Query, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, Put, Query, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
 import { ProductsService } from './products.service';
 import { AuthGuard } from '@nestjs/passport';
 import { FileInterceptor } from '@nestjs/platform-express';
@@ -31,6 +31,12 @@ export class ProductsController {
     ) {
         const edited = await this.productsService.editProduct(Number(id), productFormData, file);
         return edited;
+    }
+
+    @UseGuards(AuthGuard("jwt"))
+    @Delete(":id")
+    async deleteProduct(@Param("id") id: string) {
+        return await this.productsService.deleteProduct(Number(id));
     }
 
     @Get()

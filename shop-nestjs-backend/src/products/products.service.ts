@@ -1,4 +1,4 @@
-import { Injectable, BadRequestException } from '@nestjs/common';
+import { Injectable, BadRequestException, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Category } from './category.entity';
@@ -153,5 +153,15 @@ export class ProductsService {
         // else: keep existing imageUrl unchanged
 
         return this.productRepository.save(product);
+    }
+
+    async deleteProduct(productId: number) {
+        const product = await this.productRepository.findOne({ where: { id: productId } });
+        
+        if (!product) {
+            throw new NotFoundException("Product not found!");
+        }
+
+        return this.productRepository.delete(productId);
     }
 }

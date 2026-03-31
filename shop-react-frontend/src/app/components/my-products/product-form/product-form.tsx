@@ -3,6 +3,8 @@ import "./product-form.scss";
 import useUserStore from "../../../stores/userStore";
 import { ProductCategory, ProductData, ProductFormData } from "../../../models/products.model";
 import { createNewProduct, editProduct } from "../../../api/products.api";
+import { useAppStore } from "../../../stores/appStore";
+import { delayTimeout } from "../../../functions/delayTimeout";
 
 export const ProductForm = ({ product, categoriesList, closePopup, fetchData }:
     { product: ProductData, categoriesList: ProductCategory[], closePopup: () => void, fetchData: () => Promise<void> }) => {
@@ -18,6 +20,9 @@ export const ProductForm = ({ product, categoriesList, closePopup, fetchData }:
     const [ selectedImage, setSelectedImage ] = useState<File>();
 
     const userData = useUserStore((state => state.userData));
+
+    const isLoading = useAppStore((state => state.isLoading));
+    const setIsLoading = useAppStore((state => state.setIsLoading));
 
     useEffect(() => {
         console.log(product);
@@ -72,13 +77,16 @@ export const ProductForm = ({ product, categoriesList, closePopup, fetchData }:
         }
 
         try {
+            setIsLoading(true);
             const res = await editProduct(product.id, selectedImage ? formData : productFormData);
             console.log(res);
             await fetchData();
             closePopup();
         } catch(err) {
             console.error(err);
-            alert("Error editing product");
+            alert(err.response.data.message);
+        } finally {
+            setIsLoading(false);
         }
         return;
     }
@@ -103,13 +111,16 @@ export const ProductForm = ({ product, categoriesList, closePopup, fetchData }:
         });
 
         try {
+            setIsLoading(true);
             const res = await createNewProduct(formData);
             console.log(res);
             await fetchData();
             closePopup();
         } catch(err) {
             console.error(err);
-            alert("Error creating product");
+            alert(err.response.data.message);
+        } finally {
+            setIsLoading(false);
         }
     }
 

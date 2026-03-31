@@ -14,6 +14,7 @@ import { CookiesProvider, useCookies } from 'react-cookie';
 import { AppHeader } from './components/app-header/app-header';
 import { fetchCurrentUserData } from './api/auth.api';
 import { MyProducts } from './components/my-products/my-products';
+import { useAppStore } from './stores/appStore';
 
 function App() {
 
@@ -23,11 +24,14 @@ function App() {
   const setUserData = useUserStore(state => state.setUserData);
   const clearUserData = useUserStore(state => state.clearUserData);
 
-  const [ isLoading, setIsLoading ] = useState<boolean>(false);
+  const isLoading = useAppStore((state => state.isLoading));
+  const setIsLoading = useAppStore((state => state.setIsLoading));
+
+  const [ isInitializing, setIsInitializing ] = useState<boolean>(false);
 
   const getCurrentUserData = async () => {
     try {
-      setIsLoading(true);
+      setIsInitializing(true);
       const res = await fetchCurrentUserData();
       setUserData(res.data.userData);
     } catch(e) {
@@ -36,7 +40,7 @@ function App() {
         removeCookie("token");
       }
     } finally {
-      setIsLoading(false);
+      setIsInitializing(false);
     }
   }
 
@@ -59,7 +63,7 @@ function App() {
 
   return (
     <BrowserRouter>
-    {isLoading
+    {isInitializing
       ? <div>loading...</div>
       : (
         <div className="app">
@@ -80,6 +84,7 @@ function App() {
         </div>
       )
     }
+    {isLoading && <div className="loading-overlay"></div>}
     </BrowserRouter>
   );
 }

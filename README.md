@@ -32,8 +32,11 @@ The project simulates a real-world e-commerce system with authentication, produc
 ## Current Status
 
 - Core architecture is implemented
-- Authentication is fully working
-- Business flows (products, cart, orders) are under active development
+- Authentication is fully working (JWT registration/login)
+- Product management is fully implemented: CRUD operations, image upload, category filtering, and pagination (backend + frontend)
+- My Products dashboard is complete: sellers can create, edit, and delete their listings
+- Shop browsing page is a placeholder (in progress)
+- Cart and order flow is under development
 
 ## Getting Started
 

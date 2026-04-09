@@ -1,6 +1,6 @@
 import { error } from "console";
 import { environment } from "../../environments/environment";
-import { ProductCategory, ProductData, ProductFormData, ProductListFilters } from "../models/products.model";
+import { ListPagination, ProductCategory, ProductData, ProductFormData, ProductListFilters } from "../models/products.model";
 import axios from "axios";
 
 // helper to read `token` cookie value
@@ -19,10 +19,10 @@ export const fetchCategoriesList = async () => {
     }
 }
 
-export const fetchProductsList = async (filters: ProductListFilters) => {
+export const fetchProductsList = async (filters?: ProductListFilters, pagination?: ListPagination) => {
     try {
-        return await axios.get<ProductData[]>(environment.baseUrl + `/products`, {
-            params: filters
+        return await axios.get<{ totalCount: number, productsList: ProductData[] }>(environment.baseUrl + `/products`, {
+            params: { ...filters, ...pagination }
         });
     } catch (error) {
         console.error("Error fetching products:", error)
@@ -30,10 +30,10 @@ export const fetchProductsList = async (filters: ProductListFilters) => {
     }
 }
 
-export const fetchMyProductsList = async (filters: ProductListFilters) => {
+export const fetchMyProductsList = async (filters?: ProductListFilters, pagination?: ListPagination) => {
     try {
-        return await axios.get<ProductData[]>(environment.baseUrl + "/products/my", {
-            params: filters
+        return await axios.get<{ totalCount: number, productsList: ProductData[] }>(environment.baseUrl + "/products/my", {
+            params: { ...filters, ...pagination }
         });
     } catch (error) {
         console.error("Error fetching products:", error)

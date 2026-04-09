@@ -42,22 +42,30 @@ export class ProductsController {
     @Get()
     getProductList(
         @Query('sellerId') sellerId?: string,
-        @Query('categoryId') categoryId?: string
+        @Query('categoryId') categoryId?: string,
+        @Query('pageNumber') pageNumber?: string,
+        @Query('pageSize') pageSize?: string,
     ) {
         const sellerIdNum = sellerId ? Number(sellerId) : null;
         const categoryIdNum = categoryId ? Number(categoryId) : null;
+        const pageNumberNum = pageNumber ? Number(pageNumber) : null;
+        const pageSizeNum = pageSize ? Number(pageSize) : null;
 
-        return this.productsService.getProductList(sellerIdNum, categoryIdNum);
+        return this.productsService.getProductList(sellerIdNum, categoryIdNum, pageNumberNum, pageSizeNum);
     }
 
     @UseGuards(AuthGuard("jwt"))
     @Get("my")
     async getMyProducts(
         @CurrentUser() user: { userId: number },
-        @Query('categoryId') categoryId?: string
+        @Query('categoryId') categoryId?: string,
+        @Query('pageNumber') pageNumber?: string,
+        @Query('pageSize') pageSize?: string,
     ) {
         const categoryIdNum = categoryId ? Number(categoryId) : null;
-        return this.productsService.getProductList(user.userId, categoryIdNum);
+        const pageNumberNum = pageNumber ? Number(pageNumber) : null;
+        const pageSizeNum = pageSize ? Number(pageSize) : null;
+        return this.productsService.getProductList(user.userId, categoryIdNum, pageNumberNum, pageSizeNum);
     }
 
 

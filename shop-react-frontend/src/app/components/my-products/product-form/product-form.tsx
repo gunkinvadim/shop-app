@@ -6,13 +6,19 @@ import { createNewProduct, editProduct } from "../../../api/products.api";
 import { useAppStore } from "../../../stores/appStore";
 import { delayTimeout } from "../../../functions/delayTimeout";
 
-export const ProductForm = ({ product, categoriesList, closePopup, fetchData }:
-    { product: ProductData, categoriesList: ProductCategory[], closePopup: () => void, fetchData: () => Promise<void> }) => {
+export const ProductForm = ({ product, categoriesList, closePopup, fetchData, updatePage }:
+    {
+        product: ProductData,
+        categoriesList: ProductCategory[],
+        closePopup: () => void,
+        fetchData: () => Promise<void>,
+        updatePage: () => Promise<void>
+    }) => {
 
     const [ productFormData, setProductFormData ] = useState<ProductFormData>({
-        name: "",
-        description: "",
-        price: 0,
+        name: null,
+        description: null,
+        price: null,
         sellerId: null,
         categoryId: null
     });
@@ -80,7 +86,7 @@ export const ProductForm = ({ product, categoriesList, closePopup, fetchData }:
             setIsLoading(true);
             const res = await editProduct(product.id, selectedImage ? formData : productFormData);
             console.log(res);
-            await fetchData();
+            await updatePage();
             closePopup();
         } catch(err) {
             console.error(err);
@@ -114,7 +120,7 @@ export const ProductForm = ({ product, categoriesList, closePopup, fetchData }:
             setIsLoading(true);
             const res = await createNewProduct(formData);
             console.log(res);
-            await fetchData();
+            await updatePage();
             closePopup();
         } catch(err) {
             console.error(err);

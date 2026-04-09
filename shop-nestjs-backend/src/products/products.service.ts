@@ -24,7 +24,7 @@ export class ProductsService {
         return this.categoryRepository.find();
     }
 
-    async getProductList(sellerId: number | null, categoryId: number | null) {
+    async getProductList(sellerId: number | null, categoryId: number | null, pageNumber?: number | null, pageSize?: number | null) {
         if (sellerId == null && categoryId == null) {
             return this.productRepository.find({ relations: ['seller', 'category'] });
         }
@@ -40,9 +40,17 @@ export class ProductsService {
             qb.andWhere('product.categoryId = :categoryId', { categoryId });
         }
 
-        const res = await qb.getMany();
+        let productsList: Product[];
 
-        return res;
+        if (pageNumber != null && pageSize != null) {
+            productsList = await qb.skip((pageNumber - 1) * pageSize).take(pageSize).getMany();
+        } else {
+            productsList = await qb.getMany();
+        }
+
+        const totalCount = await qb.getCount();
+
+        return { productsList, totalCount };
     }
 
     async createNewProduct(productData: ProductFormData, file?: Express.Multer.File) {

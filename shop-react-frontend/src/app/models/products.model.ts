@@ -28,3 +28,8 @@ export interface ProductListFilters {
     categoryId?: number | null,
     sellerId?: number | null
 }
+
+export interface ListPagination {
+    pageNumber: number,
+    pageSize: number
+}

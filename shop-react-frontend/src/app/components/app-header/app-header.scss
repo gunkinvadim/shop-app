@@ -17,6 +17,9 @@
             border: none;
             padding: 5px 10px;
             background: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
             font-size: 16px;
             text-decoration: none;
             color: #61dafb;
@@ -24,6 +27,26 @@
 
             &.active {
                 color: white;
+            }
+        }
+
+        .cart-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 20px;
+            height: 20px;
+            padding: 0 5px;
+            border-radius: 50px;
+            font-size: 12px;
+            font-weight: 700;
+            line-height: 1;
+            background: #dc3545;
+            color: #fff;
+            vertical-align: middle;
+
+            &.cart-badge--active {
+                background: #28a745;
             }
         }
 

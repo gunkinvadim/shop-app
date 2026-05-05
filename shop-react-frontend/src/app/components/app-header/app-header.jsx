@@ -6,6 +6,8 @@ import { CookiesProvider, useCookies } from 'react-cookie';
 import { fetchCurrentUserData, logout } from '../../api/auth.api';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import useUserStore from '../../stores/userStore';
+import { useCartStore } from '../../stores/cartStore';
+import { useMemo } from 'react';
 
 export const AppHeader = () => {
 
@@ -16,6 +18,12 @@ export const AppHeader = () => {
     const clearUserData = useUserStore(state => state.clearUserData);
 
     const userData = useUserStore(state => state.userData);
+
+    const cart = useCartStore(state => state.cart);
+
+    const cartCount = useMemo(() => {
+        return cart.reduce(((sum, item) => sum + item.count), 0)
+    }, [cart])
     
     const logoutHandler = async () => {
         removeCookie("token");
@@ -27,7 +35,9 @@ export const AppHeader = () => {
         <div className="header-container">
             <NavLink className="header-link" to="/">Shop</NavLink>
             {(userData && userData.roles.includes("SELLER")) && <NavLink className="header-link" to="/my-products">My Products</NavLink>}
-            {(userData && userData.roles.includes("BUYER")) && <NavLink className="header-link" to="/cart">Cart</NavLink>}
+            {(userData && userData.roles.includes("BUYER")) && <NavLink className="header-link cart" to="/cart">
+                Cart <span className={`cart-badge ${cartCount > 0 ? 'cart-badge--active' : ''}`}>{cartCount}</span>
+            </NavLink>}
             {/* <NavLink className="header-link" to="/list">List</NavLink> */}
         </div>
         

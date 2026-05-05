@@ -6,6 +6,7 @@ import { useAppStore } from "../../stores/appStore";
 import "./shop.scss";
 import useUserStore from "../../stores/userStore";
 import { count } from "console";
+import { useCartStore } from "../../stores/cartStore";
 
 export const Shop = () => {
     const [ filters, setFilters ] = useState<ProductListFilters>({});
@@ -16,9 +17,10 @@ export const Shop = () => {
     const [ totalCount, setTotalCount ] = useState<number>();
     const [ isDataLoading, setIsDataLoading ] = useState(false);
 
-    const [ cart, setCart ] = useState<CartItem[]>([]);
-
     const userData = useUserStore(state => state.userData);
+
+    const cart = useCartStore(state => state.cart);
+    const setCart = useCartStore(state => state.setCart);
 
     const pageCount: number = useMemo(() => {
         return Math.ceil(totalCount / pagination.pageSize)

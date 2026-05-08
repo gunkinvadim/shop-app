@@ -20,14 +20,16 @@ export const AppHeader = () => {
     const userData = useUserStore(state => state.userData);
 
     const cart = useCartStore(state => state.cart);
+    const clearCart = useCartStore(state => state.clearCart);
 
     const cartCount = useMemo(() => {
-        return cart.reduce(((sum, item) => sum + item.count), 0)
+        return cart?.reduce(((sum, item) => sum + item.count), 0) ?? 0
     }, [cart])
     
     const logoutHandler = async () => {
         removeCookie("token");
         clearUserData();
+        clearCart();
         navigate("/login");
     }
 

@@ -188,7 +188,7 @@ export const Shop = () => {
                             <div className="product-description">{product.description}</div>
                             <div className="product-price">{product.price}$</div>
                             {userData && userData.roles.includes("BUYER") && <div className="buttons-container">
-                                {cart.some(i => i.product.id === product.id) ? <>
+                                {cart?.some(i => i.product.id === product.id) ? <>
                                     <button className="cart-decrese" onClick={() => handleCart(product, "REMOVE")}>-</button>
                                     {cart.find(i => i.product.id === product.id).count}
                                     <button className="cart-increase" onClick={() => handleCart(product, "ADD")}>+</button>

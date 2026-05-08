@@ -16,6 +16,7 @@ import { fetchCurrentUserData } from './api/auth.api';
 import { MyProducts } from './components/my-products/my-products';
 import { useAppStore } from './stores/appStore';
 import { Cart } from './components/cart/cart';
+import { useCartStore } from './stores/cartStore';
 
 function App() {
 
@@ -30,11 +31,20 @@ function App() {
 
   const [ isInitializing, setIsInitializing ] = useState<boolean>(false);
 
+  const cart = useCartStore(state => state.cart);
+  const setCart = useCartStore(state => state.setCart);
+  const clearCart = useCartStore(state => state.clearCart);
+
   const getCurrentUserData = async () => {
     try {
       setIsInitializing(true);
       const res = await fetchCurrentUserData();
       setUserData(res.data.userData);
+
+      const cart = localStorage.getItem("cart");
+      if (cart) {
+        setCart(JSON.parse(cart));
+      }
     } catch(e) {
       console.error(e);
       if (e.response.status == 401) {
@@ -59,6 +69,7 @@ function App() {
     } else {
       delete axios.defaults.headers.common['Authorization'];
       clearUserData();
+      clearCart();
     }
   }, [cookies['token']])
 
